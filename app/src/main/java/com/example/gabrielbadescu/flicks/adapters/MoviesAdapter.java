@@ -1,4 +1,4 @@
-package com.example.gabrielbadescu.flicks;
+package com.example.gabrielbadescu.flicks.adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,10 +9,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.gabrielbadescu.flicks.R;
 import com.example.gabrielbadescu.flicks.models.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 /**
  * Created by gbadesc on 5/17/16.
@@ -20,12 +23,13 @@ import java.util.ArrayList;
 public class MoviesAdapter extends ArrayAdapter<Movie> {
 
     private static class ViewHolder {
-        TextView movieTitle;
-        ImageView moviePoster;
+        TextView originalTitle;
+        TextView overview;
+        ImageView posterPath;
     }
 
     public MoviesAdapter(Context context, ArrayList<Movie> movies) {
-        super(context,R.layout.item_movie,movies);
+        super(context, R.layout.item_movie,movies);
 
 
     }
@@ -46,20 +50,22 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.item_movie, parent, false);
-            viewHolder.moviePoster = (ImageView) convertView.findViewById(R.id.ivPoster);
-            viewHolder.movieTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+            viewHolder.posterPath = (ImageView) convertView.findViewById(R.id.ivPoster);
+            viewHolder.originalTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+            viewHolder.overview = (TextView) convertView.findViewById(R.id.tvOverview);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
             Log.d("MoviesAdapter","Recycled:" + position); //tag should be the class
         }
         // Populate the data into the template view using the data object
-        viewHolder.movieTitle.setText(movie.title);
+        viewHolder.originalTitle.setText(movie.getOriginalTitle());
+        viewHolder.overview.setText(movie.getOverview());
 
-        Picasso.with(getContext()).load("http://i.imgur.com/DvpvklR.png").into(viewHolder.moviePoster);
+        Picasso.with(getContext()).load(movie.getPosterPath()).fit().centerCrop().transform(new RoundedCornersTransformation(10, 10)).into(viewHolder.posterPath);
         //viewHolder.home.setText(user.hometown);
 
-        //moviePoster.setImageURI(movie.posterImageUrl);
+        //posterPath.setImageURI(movie.posterPath);
         // Return the completed view to render on screen
         Log.d("MoviesAdapter","Position:" + position); //tag should be the class
         return convertView;

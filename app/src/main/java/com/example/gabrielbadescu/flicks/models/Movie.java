@@ -1,29 +1,64 @@
 package com.example.gabrielbadescu.flicks.models;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.*;
 /**
  * Created by gbadesc on 5/17/16.
  */
 public class Movie {
-    public String title;
-    public String posterImageUrl;
-    public int score;
+    String originalTitle;
+    String posterPath;
+    String overview;
+    String backdropPath;
 
-    public Movie(String title, String posterImageUrl, int score) {
-        this.title = title;
-        this.posterImageUrl = posterImageUrl;
-        this.score = score;
+    public String getBackdropPath() {
+        return String.format("https://image.tmdb.org/t/p/w342%s",backdropPath);
     }
 
-    public static ArrayList<Movie> getFakeData()
-    {
-        ArrayList<Movie> movies = new ArrayList<>();
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
 
-        for (int i = 0; i<160; i++) {
-            movies.add(new Movie("Civil War", "", 70));
-            movies.add(new Movie("Batman vs Superman", "", 40));
+    public String getPosterPath() {
+        return String.format("https://image.tmdb.org/t/p/w342%s",posterPath);
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+
+
+    public Movie(String originalTitle, String posterPath, String overview) {
+        this.originalTitle = originalTitle;
+        this.posterPath = posterPath;
+        this.overview = overview;
+    }
+
+    public Movie(JSONObject movieJSON) throws JSONException
+    {
+        this.posterPath = movieJSON.getString("poster_path");
+        this.originalTitle = movieJSON.getString("original_title");
+        this.overview = movieJSON.getString("overview");
+        this.backdropPath = movieJSON.getString("backdrop_path");
+    }
+
+    public static ArrayList<Movie> loadMovies(JSONArray movies)
+    {
+        ArrayList<Movie> results = new ArrayList<Movie>();
+
+        for (int i=0; i < movies.length(); i++)
+        {
+            try {
+                results.add(i,new Movie(movies.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
-        return movies;
+        return results;
     }
 }
