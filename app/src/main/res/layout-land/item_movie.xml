@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:id="@+id/ivPoster"
+        android:id="@+id/ivBackdrop"
         android:src="@android:drawable/sym_action_call" />
 
     <LinearLayout

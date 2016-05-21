@@ -26,6 +26,7 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         TextView originalTitle;
         TextView overview;
         ImageView posterPath;
+        ImageView backdropPath;
     }
 
     public MoviesAdapter(Context context, ArrayList<Movie> movies) {
@@ -51,6 +52,7 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.item_movie, parent, false);
             viewHolder.posterPath = (ImageView) convertView.findViewById(R.id.ivPoster);
+            viewHolder.backdropPath = (ImageView) convertView.findViewById(R.id.ivBackdrop);
             viewHolder.originalTitle = (TextView) convertView.findViewById(R.id.tvTitle);
             viewHolder.overview = (TextView) convertView.findViewById(R.id.tvOverview);
             convertView.setTag(viewHolder);
@@ -63,6 +65,9 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         viewHolder.overview.setText(movie.getOverview());
 
         Picasso.with(getContext()).load(movie.getPosterPath()).fit().centerCrop().transform(new RoundedCornersTransformation(10, 10)).into(viewHolder.posterPath);
+
+
+      //  Picasso.with(getContext()).load(movie.getBackdropPath()).fit().centerCrop().transform(new RoundedCornersTransformation(10, 10)).into(viewHolder.backdropPath);
         //viewHolder.home.setText(user.hometown);
 
         //posterPath.setImageURI(movie.posterPath);
