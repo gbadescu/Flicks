@@ -1,6 +1,7 @@
 package com.example.gabrielbadescu.flicks.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +23,13 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
  */
 public class MoviesAdapter extends ArrayAdapter<Movie> {
 
+    String imagePath;
+
     private static class ViewHolder {
         TextView originalTitle;
         TextView overview;
-        ImageView posterPath;
-        ImageView backdropPath;
+        ImageView imagePath;
+        //ImageView backdropPath;
     }
 
     public MoviesAdapter(Context context, ArrayList<Movie> movies) {
@@ -51,8 +54,8 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.item_movie, parent, false);
-            viewHolder.posterPath = (ImageView) convertView.findViewById(R.id.ivPoster);
-            viewHolder.backdropPath = (ImageView) convertView.findViewById(R.id.ivBackdrop);
+            viewHolder.imagePath = (ImageView) convertView.findViewById(R.id.ivImage);
+            //viewHolder.backdropPath = (ImageView) convertView.findViewById(R.id.ivBackdrop);
             viewHolder.originalTitle = (TextView) convertView.findViewById(R.id.tvTitle);
             viewHolder.overview = (TextView) convertView.findViewById(R.id.tvOverview);
             convertView.setTag(viewHolder);
@@ -64,11 +67,18 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
         viewHolder.originalTitle.setText(movie.getOriginalTitle());
         viewHolder.overview.setText(movie.getOverview());
 
-        Picasso.with(getContext()).load(movie.getPosterPath()).fit().centerCrop().transform(new RoundedCornersTransformation(10, 10)).into(viewHolder.posterPath);
+
+        boolean isLandscape = getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+
+        if (isLandscape) {
+            imagePath = movie.getBackdropPath();
+        } else {
+            imagePath = movie.getPosterPath();
+        }
 
 
-      //  Picasso.with(getContext()).load(movie.getBackdropPath()).fit().centerCrop().transform(new RoundedCornersTransformation(10, 10)).into(viewHolder.backdropPath);
-        //viewHolder.home.setText(user.hometown);
+        Picasso.with(getContext()).load(imagePath).fit().centerCrop().transform(new RoundedCornersTransformation(10, 10)).placeholder(R.drawable.image_not_available).into(viewHolder.imagePath);
+
 
         //posterPath.setImageURI(movie.posterPath);
         // Return the completed view to render on screen

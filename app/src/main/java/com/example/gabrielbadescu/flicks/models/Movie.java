@@ -13,9 +13,19 @@ public class Movie {
     String posterPath;
     String overview;
     String backdropPath;
+    private String releaseDate;
+    private String voteAverage;
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public String getVoteAverage() {
+        return voteAverage;
+    }
 
     public String getBackdropPath() {
-        return String.format("https://image.tmdb.org/t/p/w342%s",backdropPath);
+        return String.format("https://image.tmdb.org/t/p/w780%s",backdropPath);
     }
 
     public String getOriginalTitle() {
@@ -44,6 +54,8 @@ public class Movie {
         this.originalTitle = movieJSON.getString("original_title");
         this.overview = movieJSON.getString("overview");
         this.backdropPath = movieJSON.getString("backdrop_path");
+        this.releaseDate = movieJSON.getString("release_date");
+        this.voteAverage = movieJSON.getString("vote_average");
     }
 
     public static ArrayList<Movie> loadMovies(JSONArray movies)

@@ -1,10 +1,13 @@
 package com.example.gabrielbadescu.flicks.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.gabrielbadescu.flicks.adapters.MoviesAdapter;
@@ -27,6 +30,7 @@ public class MoviesActivity extends AppCompatActivity {
     ArrayList<Movie> movies;
     MoviesAdapter moviesAdapter;
     SwipeRefreshLayout swipeContainer;
+    ListView lvMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,9 @@ public class MoviesActivity extends AppCompatActivity {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                fetchMoviesAsync(0);
+                movies.clear();
+
+                fetchMoviesAsync(1);
             }
         });
         // Configure the refreshing colors
@@ -52,7 +58,7 @@ public class MoviesActivity extends AppCompatActivity {
 
 
         //Get a reference to list view
-        ListView lvMovies = (ListView) findViewById(R.id.lvMovies);
+        lvMovies = (ListView) findViewById(R.id.lvMovies);
 
         //Get MOvies we want to display
         // ArrayList<Movie> movies = Movie.getFakeData();
@@ -67,14 +73,68 @@ public class MoviesActivity extends AppCompatActivity {
             lvMovies.setAdapter(moviesAdapter);
         }
 
-        fetchMoviesAsync(0);
+        //Retrieve first page of movies
+        fetchMoviesAsync(1);
 
+        lvMovies.setOnScrollListener(new EndlessScrollListener(5,1) {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                fetchMoviesAsync(page);
+                // or customLoadMoreDataFromApi(totalItemsCount);
+                return true; // ONLY if more data is actually being loaded; false otherwise.
+            }
+        });
+
+        setupListViewListener();
+
+    }
+
+    private boolean setupListViewListener()
+    {
+
+        lvMovies.setOnItemClickListener(
+
+                new AdapterView.OnItemClickListener() {
+
+
+
+
+                    public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+
+
+
+                        Intent detailIntent = new Intent(MoviesActivity.this,MovieDetailActivity.class);
+
+
+
+                        detailIntent.putExtra("originalTitle", movies.get(pos).getOriginalTitle());
+                        detailIntent.putExtra("overview",movies.get(pos).getOverview());
+
+
+                        detailIntent.putExtra("posterPath",movies.get(pos).getPosterPath());
+                        detailIntent.putExtra("backdropPath",movies.get(pos).getBackdropPath());
+
+                        detailIntent.putExtra("releaseDate",movies.get(pos).getReleaseDate());
+                        detailIntent.putExtra("voteAverage",movies.get(pos).getVoteAverage());
+
+                        startActivityForResult(detailIntent,200);
+
+                    }
+
+
+
+                }
+        );
+
+        return true;
     }
 
     public void fetchMoviesAsync(int page) {
         // Send the network request to fetch the updated data
         // `client` here is an instance of Android Async HTTP
-        String url = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
+        String url = String.format("https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed&page=%s",page);
 
         AsyncHttpClient client = new AsyncHttpClient();
 
@@ -86,7 +146,7 @@ public class MoviesActivity extends AppCompatActivity {
                 try {
                     movieJsonResults = response.getJSONArray("results");
 
-                    movies.clear();
+                    //movies.clear();
 
                     movies.addAll(Movie.loadMovies(movieJsonResults));
 
