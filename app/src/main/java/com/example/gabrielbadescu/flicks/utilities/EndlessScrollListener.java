@@ -1,4 +1,4 @@
-package com.example.gabrielbadescu.flicks.activities;
+package com.example.gabrielbadescu.flicks.utilities;
 
 /**
  * Created by gabrielbadescu on 5/21/16.

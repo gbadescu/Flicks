@@ -25,7 +25,7 @@
             android:textSize="15sp"
             android:layout_marginTop="10dp" />
 
-        <TextView
+        <com.example.gabrielbadescu.flicks.utilities.EllipsizingTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
